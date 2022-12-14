@@ -28,8 +28,6 @@ class Snake:
             self.body[len(self.body) - 1].color("white")
             self.body[len(self.body) - 1].shape("square")
             self.body[len(self.body) - 1].goto(self.start_positions[len(self.body) - 1])
-        print(self.body[0].heading())
-        # self.screen.update()
 
     def getLead(self):
         return self.body[0]
