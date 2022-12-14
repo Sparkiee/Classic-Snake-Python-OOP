@@ -1,11 +1,10 @@
 import turtle
-from turtle import Turtle, Screen
-import random
+from turtle import Turtle
 
 
 class Snake:
     def __init__(self):
-        self.timer = 1
+        self.timer = 0.5
         self.draw_score = Turtle()
         self.draw_score.color("white")
         self.draw_score.hideturtle()
@@ -14,11 +13,7 @@ class Snake:
         self.draw_score.write(f"Score: 0", font=("Arial", 20), align="center")
 
         self.score = 0
-        self.food = []
-        self.food_draw = Turtle()
-        self.food_draw.shape("circle")
-        self.food_draw.color("blue")
-        self.food_draw.penup()
+
         self.heading = 0
         self.start_positions = [(0, 0), (-20, 0), (-40, 0)]
         self.body = []
@@ -29,22 +24,8 @@ class Snake:
             self.body[len(self.body) - 1].shape("square")
             self.body[len(self.body) - 1].goto(self.start_positions[len(self.body) - 1])
 
-    def getLead(self):
+    def getHead(self):
         return self.body[0]
-
-    def drop_food(self):
-        x = round(random.randint(-300, 300) / 20)
-        if x < 0:
-            x += 1
-        else:
-            x -= 1
-        y = round(random.randint(-300, 300) / 20)
-        if y < 0:
-            y += 1
-        else:
-            y -= 1
-        self.food.append((x * 20, y * 20))
-        self.food_draw.goto(self.food[0][0], self.food[0][1])
 
     def play(self):
         pos = ""
@@ -63,21 +44,6 @@ class Snake:
         self.body[len(self.body) - 1].setheading(self.body[0].heading())
         self.body.insert(0, self.body.pop())
 
-        if self.getLead().pos() == self.food_draw.pos():
-            self.food.pop()
-            self.drop_food()
-            self.score += 1
-            if self.score % 2 == 0:
-                if self.timer > 0.5:
-                    self.timer -= 0.1
-                self.body.append(Turtle())
-                self.body[len(self.body) - 1].penup()
-                self.body[len(self.body) - 1].color("white")
-                self.body[len(self.body) - 1].shape("square")
-                self.body[len(self.body) - 1].setpos((-600, -600))
-            self.draw_score.clear()
-            self.draw_score.write(f"Score: {self.score}", font=("Arial", 20), align="center")
-
         if self.is_out_of_bounds() or self.self_collision():
             turtle.Turtle()
             turtle.color("white")
@@ -93,9 +59,22 @@ class Snake:
         return False
 
     def self_collision(self):
-        count = 0
-        for i in self.body:
-            for j in self.body:
-                if i != j and i.pos() == j.pos():
+        for i in self.body[1:]:
+                if i.pos() == self.getHead().pos():
                     return True
         return False
+
+    def increase_snake(self):
+        self.body.append(Turtle())
+        self.body[len(self.body) - 1].penup()
+        self.body[len(self.body) - 1].color("white")
+        self.body[len(self.body) - 1].shape("square")
+        self.body[len(self.body) - 1].setpos((-600, -600))
+
+    def increase_speed(self):
+        if self.timer >= 0.2:
+            self.timer -= 0.1
+
+    def update_score(self):
+        self.draw_score.clear()
+        self.draw_score.write(f"Score: {self.score}", font=("Arial", 20), align="center")
